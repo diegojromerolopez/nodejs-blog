@@ -1,0 +1,22 @@
+{
+  "name": "nodejs-blog",
+  "version": "1.0.0",
+  "description": "A weblog developed in Node.js and React for the fullstack helsinki course",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "git push heroku master",
+    "postinstall": "cd backend && npm install",
+    "start": "cd backend && npm start",
+    "dev": "cd backend && nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegojromerolopez/nodejs-blog.git"
+  },
+  "author": "Diego J. Romero López",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/diegojromerolopez/nodejs-blog/issues"
+  },
+  "homepage": "https://github.com/diegojromerolopez/nodejs-blog#readme"
+}
