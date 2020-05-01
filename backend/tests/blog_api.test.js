@@ -135,7 +135,58 @@ test('blog with repeated name is not created', async () => {
         .expect(400)
 })
 
+test('blog has title updated', async () => {
+    const blog = await (new Blog({
+        'title': 'Jack Doe\'s Blog: A look into the past',
+        'author': 'Jack Doe',
+        'url': 'http://example.com',
+        'creationDate': new Date()
+    })).save()
 
+    const newTitle = 'John Titor\'s Blog: A look into the future'
+    await api
+        .put(`/api/blogs/${blog.id}`)
+        .send({
+            'title': newTitle,
+        })
+        .expect(200)
+    const updatedBlog = await Blog.findOne({})
+    expect(updatedBlog.title).toBe(newTitle)
+})
+
+test('blog has likes updated', async () => {
+    const blog = await (new Blog({
+        'title': 'Jack Doe\'s Blog: A look into the past',
+        'author': 'Jack Doe',
+        'url': 'http://example.com',
+        'creationDate': new Date()
+    })).save()
+
+    await api
+        .put(`/api/blogs/${blog.id}`)
+        .send({
+            'likes': 8,
+        })
+        .expect(200)
+    const updatedBlog = await Blog.findOne({})
+    expect(updatedBlog.likes).toBe(8)
+})
+
+test('blog not updated, no data sent', async () => {
+    const blog = await (new Blog({
+        'title': 'Jack Doe\'s Blog: A look into the past',
+        'author': 'Jack Doe',
+        'url': 'http://example.com',
+        'creationDate': new Date()
+    })).save()
+
+    await api
+        .put(`/api/blogs/${blog.id}`)
+        .send({})
+        .expect(400)
+    const nonUpdatedBlog = await Blog.findOne({})
+    expect(nonUpdatedBlog.title).toBe(blog.title)
+})
 
 test('blog is deleted', async () => {
     const blog = await (new Blog({
@@ -148,6 +199,12 @@ test('blog is deleted', async () => {
     await api
         .delete(`/api/blogs/${blog.id}`)
         .expect(201)
+})
+
+test('blog id doesn\'t exist, so is not deleted', async () => {
+    await api
+        .delete('/api/blogs/41224d776a326fb40f000001')
+        .expect(404)
 })
 
 afterAll(() => {

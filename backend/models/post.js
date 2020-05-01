@@ -3,17 +3,18 @@ const Schema = mongoose.Schema
 
 mongoose.set('useFindAndModify', false)
 
-const blogSchema = new mongoose.Schema({
+const postSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
         minlength: 8,
         unique: true
     },
-    author: {
+    content: {
         type: String,
         required: true,
-        minlength: 8
+        minlength: 8,
+        unique: true
     },
     url: {
         type: String,
@@ -28,14 +29,13 @@ const blogSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    posts: [{
+    blog: {
         type: Schema.Types.ObjectId,
-        ref: 'Post',
-        required: true
-    }]
+        ref: 'Blog'
+    }
 })
 
-blogSchema.set('toJSON', {
+postSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()
         delete returnedObject._id
@@ -43,4 +43,4 @@ blogSchema.set('toJSON', {
     }
 })
 
-module.exports = mongoose.model('Blog', blogSchema)
+module.exports = mongoose.model('Post', postSchema)

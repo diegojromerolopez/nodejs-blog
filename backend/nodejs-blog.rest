@@ -13,3 +13,30 @@ Content-Type: application/json
 ###
 
 DELETE http://localhost:3001/api/blogs/1 HTTP/1.1
+
+###
+
+GET http://localhost:3001/api/blogs/5eac7e4c4f7b924d6bc6cc7c/posts HTTP/1.1
+
+###
+
+POST http://localhost:3001/api/blogs/5eac7e4c4f7b924d6bc6cc7c/posts HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "Worl War III",
+    "content": "John Titor describes Worl War III as a unexpected conflict between...",
+    "url": "http://example.com/"
+}
+
+###
+
+DELETE http://localhost:3001/api/blogs/5eac7e4c4f7b924d6bc6cc7c/posts/5eac87d6632eb5557dfdd67c HTTP/1.1
+
+###
+
+PUT http://localhost:3001/api/blogs/5eac7e4c4f7b924d6bc6cc7c/posts/5eac812ebbcfcc4f7c3f98dd HTTP/1.1
+
+{
+    "content": "John Titor describes the post-war world"
+}
