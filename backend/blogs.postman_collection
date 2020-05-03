@@ -1,0 +1,349 @@
+{
+	"variables": [],
+	"info": {
+		"name": "blogs project",
+		"_postman_id": "ee54000a-9b32-7c0e-79b7-26a1e71afa3e",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all users",
+			"request": {
+				"url": "http://localhost:3001/api/users",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create new user",
+			"request": {
+				"url": "http://localhost:3001/api/users",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\n        \"username\": \"selassie\",\n        \"name\": \"Haile Selassie\",\n        \"email\": \"selassie@example.com\",\n        \"password\": \"selassie\"\n    }"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Auth login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"jwt\", jsonData.token);",
+							"postman.setEnvironmentVariable(\"userId\", jsonData.user.id);",
+							"postman.setEnvironmentVariable(\"username\", jsonData.user.username);",
+							"postman.setEnvironmentVariable(\"name\", jsonData.user.name);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3001/api/auth/login",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\n        \"username\": \"selassie\",\n        \"password\": \"selassie\"\n    }"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Auth logout",
+			"request": {
+				"url": "http://localhost:3001/api/auth/logout",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get blogs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"if(jsonData.length > 0){",
+							"    postman.setEnvironmentVariable(\"blogId\", jsonData[0].id);    ",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3001/api/blogs",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create blog",
+			"request": {
+				"url": "http://localhost:3001/api/blogs",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{username}}'s Blog: A look into the {{username}}'s world\",\n    \"author\": \"{{name}}\",\n    \"url\": \"http://example.com\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update blog",
+			"request": {
+				"url": "http://localhost:3001/api/blogs/{{blogId}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{username}}'s musings\",\n    \"url\": \"http://example.com/{{username}}\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete blog",
+			"request": {
+				"url": "http://localhost:3001/api/blogs/{{blogId}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get blog posts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"if(jsonData.length > 0){",
+							"    postman.setEnvironmentVariable(\"postId\", jsonData[0].id);    ",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3001/api/blogs/{{blogId}}/posts",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{username}}'s Blog: A look into the {{username}}'s world\",\n    \"author\": \"{{name}}\",\n    \"url\": \"http://example.com\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create blog posts",
+			"request": {
+				"url": "http://localhost:3001/api/blogs/{{blogId}}/posts",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{username}}'s Blog: A look into the {{username}}'s world\",\n    \"content\": \"Lorem ipsum dolor sit amet\",\n    \"url\": \"http://example.com\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update blog post",
+			"request": {
+				"url": "http://localhost:3001/api/blogs/{{blogId}}/posts/{{postId}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{username}}'s Blog: A lorem ipsum\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete blog post",
+			"request": {
+				"url": "http://localhost:3001/api/blogs/{{blogId}}/posts/{{postId}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get blogs (all)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"if(jsonData.length > 0){",
+							"    postman.setEnvironmentVariable(\"blogId\", jsonData[0].id);    ",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3001/api/blogs/all",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
