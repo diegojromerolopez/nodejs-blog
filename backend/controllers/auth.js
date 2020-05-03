@@ -30,7 +30,7 @@ authRouter.post('/login', async (request, response) => {
 
     response
         .status(200)
-        .send({ token, username: user.username, name: user.name })
+        .send({ token: token, user: user.toJSON() })
 })
 
 authRouter.post('/logout', middleware.currentUserFromToken, async (request, response) => {

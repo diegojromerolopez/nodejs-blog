@@ -12,7 +12,8 @@
     "start": "NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
-    "test": "NODE_ENV=test jest --verbose --runInBand"
+    "test": "NODE_ENV=test jest --verbose --runInBand",
+    "testCoverage": "NODE_ENV=test jest --verbose --collectCoverage --runInBand"
   },
   "author": "Diego J. Romero López",
   "license": "ISC",

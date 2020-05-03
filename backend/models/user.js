@@ -51,6 +51,7 @@ userSchema.set('toJSON', {
         delete returnedObject.__v
         delete returnedObject.superuser
         delete returnedObject.passwordHash
+        delete returnedObject.openSessionTokens
     }
 })
 

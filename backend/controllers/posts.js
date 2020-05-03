@@ -6,10 +6,10 @@ const Post = require('../models/post')
 postsRouter.use(middleware.currentUserFromToken)
 
 postsRouter.get('/', async (request, response) => {
-    const blog = await Blog.findOne(
-        {'_id': request.params.blogId, creator: request.currentUser._id}
-    ).populate('posts').populate('creator')
-    response.json(blog.posts.map(post => post.toJSON()))
+    const posts = await Post.find(
+        {blog: request.params.blogId, creator: request.currentUser._id}
+    ).populate('creator')
+    response.json(posts.map(post => post.toJSON()))
 })
 
 postsRouter.post('/', async (request, response) => {
@@ -51,17 +51,14 @@ postsRouter.put('/:postId', async (request, response) => {
 })
 
 postsRouter.delete('/:postId', async (request, response) => {
-    console.log(request.params)
     const deletedPost = await Post.findOneAndDelete(
         {blog: request.params.blogId, creator: request.currentUser._id, _id: request.params.postId}
     )
-    console.log(deletedPost)
     if(deletedPost){
-        console.log(deletedPost)
         const blog = await Blog.findById(request.params.blogId)
         blog.posts.pull(request.params.postId)
         await blog.save()
-        response.status(201).end()
+        response.status(200).end()
     }else{
         response.status(404).end()
     }

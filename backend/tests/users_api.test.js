@@ -68,6 +68,23 @@ test('creation fails because of no username', async () => {
     expect(usersCountAtEnd).toBe(0)
 })
 
+test('creation fails because of no password', async () => {
+    const newUser = {
+        email: 'johntitor@example.com',
+        name: 'Jonh Titor'
+    }
+
+    const response = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+    
+    expect(response.body.error).toBe('password missing')
+    const usersCountAtEnd = await User.count({})
+    expect(usersCountAtEnd).toBe(0)
+})
+
 test('creation fails because of short password', async () => {
     const newUser = {
         email: 'johntitor@example.com',
