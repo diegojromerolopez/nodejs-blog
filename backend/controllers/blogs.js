@@ -1,16 +1,28 @@
+const middleware = require('../utils/middleware')
 const blogsRouter = require('express').Router()
+const User = require('../models/user')
 const Blog = require('../models/blog')
 
+blogsRouter.use(middleware.currentUserFromToken)
 
-blogsRouter.get('/', async (_request, response) => {
-    const blogs = await Blog.find({})
+blogsRouter.get('/', async (request, response) => {
+    const blogs = await Blog.find({creator: request.currentUser._id})
+    response.json(blogs.map(blog => blog.toJSON()))
+})
+
+blogsRouter.get('/all', async (request, response) => {
+    const blogs = await Blog.find({}).populate('creator')
     response.json(blogs.map(blog => blog.toJSON()))
 })
 
 blogsRouter.post('/', async (request, response) => {
+    const currentUser = await User.findById(request.currentUser._id)
     const blog = new Blog(request.body)
     blog.creationDate = new Date()
-    await blog.save()    
+    blog.creator = currentUser._id
+    await blog.save()
+    currentUser.blogs.push(blog)
+    await currentUser.save()
     response.status(204).end()
 })
 
@@ -24,7 +36,11 @@ blogsRouter.put('/:blogId', async (request, response) => {
     if(Object.keys(updatedAttributes).length === 0){
         return response.status(400).end()
     }
-    const updatedBlog = await Blog.findOneAndUpdate({'_id': request.params.blogId}, updatedAttributes, {new: true})
+    const updatedBlog = await Blog.findOneAndUpdate(
+        {'_id': request.params.blogId, creator: request.currentUser._id},
+        updatedAttributes,
+        {new: true}
+    )
     if(updatedBlog){
         response.json(updatedBlog.toJSON())
     }else{
@@ -33,9 +49,11 @@ blogsRouter.put('/:blogId', async (request, response) => {
 })
 
 blogsRouter.delete('/:blogId', async (request, response) => {
-    const deletedBlog = await Blog.findByIdAndDelete(request.params.blogId)
+    const deletedBlog = await Blog.findOneAndRemove(
+        {'_id': request.params.blogId, creator: request.currentUser._id}
+    )
     if(deletedBlog){
-        response.status(201).end()
+        response.status(200).end()
     }else{
         response.status(404).end()
     }

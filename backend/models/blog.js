@@ -28,6 +28,11 @@ const blogSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    creator: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     posts: [{
         type: Schema.Types.ObjectId,
         ref: 'Post',

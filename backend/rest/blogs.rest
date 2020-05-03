@@ -1,0 +1,15 @@
+GET http://localhost:3001/api/blogs HTTP/1.1
+
+###
+POST http://localhost:3001/api/blogs HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "John Titor's Blog: A look into the future",
+    "author": "John Titor",
+    "url": "http://example.com"
+}
+
+###
+
+DELETE http://localhost:3001/api/blogs/1 HTTP/1.1

@@ -1,18 +1,24 @@
+const middleware = require('../utils/middleware')
 const postsRouter = require('express').Router({ mergeParams: true })
 const Blog = require('../models/blog')
 const Post = require('../models/post')
 
+postsRouter.use(middleware.currentUserFromToken)
 
 postsRouter.get('/', async (request, response) => {
-    const blog = await Blog.findById(request.params.blogId).populate('posts')
+    const blog = await Blog.findOne(
+        {'_id': request.params.blogId, creator: request.currentUser._id}
+    ).populate('posts').populate('creator')
     response.json(blog.posts.map(post => post.toJSON()))
 })
 
 postsRouter.post('/', async (request, response) => {
     // Find the blog parent
-    const blog = await Blog.findById(request.params.blogId)
+    const blog = await Blog.findOne(
+        {'_id': request.params.blogId, creator: request.currentUser._id}
+    )
     // Post creation
-    const post = new Post({blog: blog._id, ...request.body})
+    const post = new Post({blog: blog._id, creator: request.currentUser._id, ...request.body})
     post.creationDate = new Date()
     await post.save()    
     // Update blog part
@@ -33,7 +39,7 @@ postsRouter.put('/:postId', async (request, response) => {
         return response.status(400).end()
     }    
     const updatedPost = await Post.findOneAndUpdate(
-        {blog: request.params.blogId, _id: request.params.postId},
+        {blog: request.params.blogId, creator: request.currentUser._id, _id: request.params.postId},
         updatedAttributes,
         {new: true}
     )
@@ -47,7 +53,7 @@ postsRouter.put('/:postId', async (request, response) => {
 postsRouter.delete('/:postId', async (request, response) => {
     console.log(request.params)
     const deletedPost = await Post.findOneAndDelete(
-        {blog: request.params.blogId, _id: request.params.postId}
+        {blog: request.params.blogId, creator: request.currentUser._id, _id: request.params.postId}
     )
     console.log(deletedPost)
     if(deletedPost){

@@ -1,21 +1,51 @@
+const bcrypt = require('bcrypt')
 const express = require('express')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 app.use(express.json())
 const api = supertest(app)
+const User = require('../models/user')
 const Blog = require('../models/blog')
 
-beforeEach(async () => {
+//let token
+//let currentUser
+
+const setUp = async () => {
+    await User.deleteMany({})
     await Blog.deleteMany({})
-})
+    
+    const password = 'johntitor_password'
+    const user = new User({
+        username: 'johntitor',
+        email: 'johntitor@example.com',
+        name: 'John Titor',
+        passwordHash: await bcrypt.hash(password, 10),
+        creationDate: new Date(),
+    })
+    await user.save()
+    console.log(user)
+    const response = await api
+        .post('/api/auth/login')
+        .send({
+            username: user.username,
+            password: password
+        })
+    console.log(response.body)
+    const token = response.body.token
+    const currentUser = response.body.currentUser
+    return {token, currentUser}
+}
 
 test('blogs are returned as json', async () => {
+    const  {token, currentUser} = await setUp()
+
     const blog1 = new Blog({
         'title': 'Jack Doe\'s Blog: A look into the past',
         'author': 'Jack Doe',
         'url': 'http://example.com',
-        'creationDate': new Date()
+        'creationDate': new Date(),
+        'creator': currentUser._id
     })
     await blog1.save()
 
@@ -23,12 +53,14 @@ test('blogs are returned as json', async () => {
         'title': 'John Doe\'s Blog: A look into the past',
         'author': 'John Doe',
         'url': 'http://example.com',
-        'creationDate': new Date()
+        'creationDate': new Date(),
+        'creator': currentUser._id
     })
     await blog2.save()
 
     const response = await api
         .get('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .expect(200)
         .expect('Content-Type', /application\/json/)
     

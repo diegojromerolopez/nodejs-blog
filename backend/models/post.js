@@ -32,6 +32,10 @@ const postSchema = new mongoose.Schema({
     blog: {
         type: Schema.Types.ObjectId,
         ref: 'Blog'
+    },
+    creator: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 })
 
@@ -40,6 +44,7 @@ postSchema.set('toJSON', {
         returnedObject.id = returnedObject._id.toString()
         delete returnedObject._id
         delete returnedObject.__v
+        delete returnedObject.creator
     }
 })
 
