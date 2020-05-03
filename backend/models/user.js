@@ -4,6 +4,19 @@ const Schema = mongoose.Schema
 
 mongoose.set('useFindAndModify', false)
 
+const sessionTokenSchema = new Schema({
+    token: {
+        type: String,
+        required: true
+    },
+    creationDate: {
+        type: Date,
+        required: false,
+        default: Date.now
+    }
+})
+
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -39,8 +52,8 @@ const userSchema = new mongoose.Schema({
         required: true
     }],
     openSessionTokens: {
-        type: [String],
-        required: true
+        type: [sessionTokenSchema],
+        required: false
     },
 })
 

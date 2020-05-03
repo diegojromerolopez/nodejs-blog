@@ -25,7 +25,7 @@ authRouter.post('/login', async (request, response) => {
   
     const token = jwt.sign(userForToken, process.env.SECRET)
   
-    user.openSessionTokens.push(token)
+    user.openSessionTokens.push({token})
     await user.save()
 
     response
@@ -35,13 +35,15 @@ authRouter.post('/login', async (request, response) => {
 
 authRouter.post('/logout', middleware.currentUserFromToken, async (request, response) => {
     const user = request.currentUser
-    // Return a 401 if the current token is being used by the user in a session
-    if (user.openSessionTokens.filter(userToken => userToken == request.token).length > 0){
-        user.openSessionTokens.pull(request.token)
-        await user.save()
+    const updatedUser = await User.findOneAndUpdate(
+        {_id: user._id},
+        {$pull: {openSessionTokens: {token: request.token}}},
+        {new: true}
+    )
+    if(updatedUser){
         return response.status(401).end()
     }
-    response.status(200).end()
+    response.status(500).end()
 })
 
 module.exports = authRouter

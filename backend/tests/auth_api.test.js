@@ -36,6 +36,65 @@ test('login OK', async () => {
     expect(response.body).toHaveProperty('token')
     expect(response.body).toHaveProperty('user')
     expect(response.body.user.id).toBe(this.user._id.toString())
+
+    const user = await User.findById(this.user._id) 
+    expect(user.openSessionTokens).toHaveLength(1)
+    expect(user.openSessionTokens[0]).toHaveProperty('token', response.body.token)
+    expect(user.openSessionTokens[0]).toHaveProperty('creationDate')
+})
+
+test('login not OK, invalid username', async () => {
+    const response = await api
+        .post('/api/auth/login')
+        .send({
+            username: 'invalid username',
+            password: this.password
+        })
+        .expect(401)
+    
+    expect(response.body).toHaveProperty('error', 'invalid username or password')
+})
+
+test('login not OK, invalid password', async () => {
+    const response = await api
+        .post('/api/auth/login')
+        .send({
+            username: this.username,
+            password: 'invalid password'
+        })
+        .expect(401)
+    
+    expect(response.body).toHaveProperty('error', 'invalid username or password')
+})
+
+test('logout OK', async () => {
+    const loginResponse = await api
+        .post('/api/auth/login')
+        .send({
+            username: this.username,
+            password: this.password
+        })
+        .expect(200)
+
+    const token = loginResponse.body.token
+    await api
+        .post('/api/auth/logout')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(401)
+})
+
+test('logout not OK, invalid token', async () => {
+    await api
+        .post('/api/auth/logout')
+        .set('Authorization', 'Bearer invalidtoken')
+        .expect(401)
+})
+
+test('logout not OK, invalid header', async () => {
+    await api
+        .post('/api/auth/logout')
+        .set('Authorization', 'Wearer invalidtoken')
+        .expect(401)
 })
 
 afterAll(() => {
