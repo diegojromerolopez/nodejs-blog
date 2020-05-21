@@ -5,16 +5,15 @@ import BlogForm from './components/BlogForm'
 import Login from './components/Login'
 import Logout from './components/Logout'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlogTitle, setNewBlogTitle] = useState('')
-  const [newBlogAuthor, setNewBlogAuthor] = useState('')
-  const [newBlogUrl, setNewBlogUrl] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationType, setNotificationType] = useState(null)
+  // Login states
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
@@ -39,6 +38,22 @@ const App = () => {
       )  
     }
   }, [])
+
+  const blogSorter = (b1, b2) => {
+    if(b1.likes < b2.likes){
+      return 1
+    }
+    if(b1.likes > b2.likes){
+      return -1
+    }
+    if(b1.title < b2.title){
+      return 1
+    }
+    if(b1.title > b2.title){
+      return -1
+    }
+    return 0
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -66,25 +81,6 @@ const App = () => {
     setNotification('Logout successful', 'error')
   }
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newBlogTitle,
-      author: newBlogAuthor,
-      url: newBlogUrl
-    }
-    try {
-      const respBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(respBlog))
-      setNewBlogTitle('')
-      setNewBlogAuthor('')
-      setNewBlogUrl('')
-      setNotification("Blog added succesfully", "success")
-    }catch(exception){
-      setNotification("Blog couldn't be added succesfully", "error")
-    }
-  }
-
   return (
     <div>
       <h2>blogs</h2>
@@ -93,25 +89,26 @@ const App = () => {
       
       {user ?
         <Logout handleLogout={handleLogout} user={user} /> :
-        <Login handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword} /> 
+        <Login handleLogin={handleLogin}
+               username={username} setUsername={setUsername}
+               password={password} setPassword={setPassword}
+        /> 
       }      
 
       {
       user ?
-        blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+        blogs.sort(blogSorter).map(blog =>
+          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} user={user} />
         ) : ""
       }
-      {
-        user ?
-        <BlogForm onSubmit={addBlog}
-                  newBlogTitle={newBlogTitle} setNewBlogTitle={setNewBlogTitle}
-                  newBlogAuthor={newBlogAuthor} setNewBlogAuthor={setNewBlogAuthor}
-                  newBlogUrl={newBlogUrl} setNewBlogUrl={setNewBlogUrl}
-        />
-        :
-        ""
-      }
+      <Togglable viewButtonLabel="new blog">
+        {
+          user ?
+          <BlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} />
+          :
+          ""
+        }
+      </Togglable>
     </div>
   )
 }

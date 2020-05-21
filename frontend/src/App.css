@@ -46,3 +46,19 @@
   color: white;
   background-color: green;
 }
+
+.blog{
+  border: 2px solid black;
+  margin-left: 1em;
+  padding: 0.2em;
+}
+
+.blog:nth-child(odd){
+  background-color: darkcyan;
+  color: black;
+}
+
+.blog:nth-child(even){
+  background-color: navy;
+  color: white;
+}

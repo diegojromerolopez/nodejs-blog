@@ -48,6 +48,33 @@ blogsRouter.put('/:blogId', async (request, response) => {
     }
 })
 
+blogsRouter.put('/:blogId/like', async (request, response) => {
+    const updatedBlog = await Blog.findOneAndUpdate(
+        {'_id': request.params.blogId, 'likers': {'$nin': request.currentUser._id}},
+        {'$inc': {'likes': 1}, '$addToSet': {'likers': request.currentUser._id}},
+        {new: true}
+    )
+    console.log(updatedBlog)
+    if(updatedBlog){
+        response.json(updatedBlog.toJSON())
+    }else{
+        response.status(404).end()
+    }
+})
+
+blogsRouter.put('/:blogId/unlike', async (request, response) => {
+    const updatedBlog = await Blog.findOneAndUpdate(
+        {'_id': request.params.blogId, 'likers': {'$in': request.currentUser._id}},
+        {'$inc': {'likes': -1}, '$pull': {'likers': request.currentUser._id}},
+        {new: true}
+    )
+    if(updatedBlog){
+        response.json(updatedBlog.toJSON())
+    }else{
+        response.status(404).end()
+    }
+})
+
 blogsRouter.delete('/:blogId', async (request, response) => {
     const deletedBlog = await Blog.findOneAndRemove(
         {'_id': request.params.blogId, creator: request.currentUser._id}

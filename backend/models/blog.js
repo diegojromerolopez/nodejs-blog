@@ -37,6 +37,11 @@ const blogSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Post',
         required: true
+    }],
+    likers: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }]
 })
 
