@@ -87,6 +87,15 @@ const App = () => {
 
       <Notification message={notificationMessage} notifType={notificationType} />
       
+      <Togglable viewButtonLabel="new blog">
+        {
+          user ?
+          <BlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} />
+          :
+          ""
+        }
+      </Togglable>
+
       {user ?
         <Logout handleLogout={handleLogout} user={user} /> :
         <Login handleLogin={handleLogin}
@@ -101,14 +110,6 @@ const App = () => {
           <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} user={user} />
         ) : ""
       }
-      <Togglable viewButtonLabel="new blog">
-        {
-          user ?
-          <BlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} />
-          :
-          ""
-        }
-      </Togglable>
     </div>
   )
 }
