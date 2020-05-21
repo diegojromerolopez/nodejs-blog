@@ -31,10 +31,14 @@ const Blog = ({ blog, blogs, setBlogs, setNotification, user }) =>{
   
   const deleteBlog = async (blog) => {
     try {
-      const respBlog = await blogService.deleteBlog(blog.id)
-      console.log(respBlog)
-      setBlogs(blogs.filter(blogI => blogI.id !== blog.id))
-      setNotification(`Blog ${blog.title} removed`, "success")
+      if(window.confirm(`Are you sure you want to delete ${blog.title}`)){
+        const respBlog = await blogService.deleteBlog(blog.id)
+        console.log(respBlog)
+        setBlogs(blogs.filter(blogI => blogI.id !== blog.id))
+        setNotification(`Blog ${blog.title} removed`, "success")
+      }else{
+        setNotification(`Blog ${blog.title} will not be removed (canceld by user)`, "success")
+      }
     }catch(exception){
       console.error(exception)
       setNotification(`Blog ${blog.title} couldn't be removed`, "error")
