@@ -29,6 +29,18 @@ const Blog = ({ blog, blogs, setBlogs, setNotification, user }) =>{
     }
   }
   
+  const deleteBlog = async (blog) => {
+    try {
+      const respBlog = await blogService.deleteBlog(blog.id)
+      console.log(respBlog)
+      setBlogs(blogs.filter(blogI => blogI.id !== blog.id))
+      setNotification(`Blog ${blog.title} removed`, "success")
+    }catch(exception){
+      console.error(exception)
+      setNotification(`Blog ${blog.title} couldn't be removed`, "error")
+    }
+  }
+
   return (
     <div className="blog">
       <h2>{blog.title}</h2>
@@ -38,6 +50,7 @@ const Blog = ({ blog, blogs, setBlogs, setNotification, user }) =>{
           ❤ {blog.likes}
           {user && blog.likers.indexOf(user.id) === -1 && <button onClick={()=>{like(blog)}}>like</button>}
           {user && blog.likers.indexOf(user.id) > -1 && <button onClick={()=>{unlike(blog)}}>unlike</button>}
+          {user && blog.creator == user.id && <button onClick={()=>{deleteBlog(blog)}}>Delete</button>}
         </div>
         <div><a href={blog.url}>Visit</a></div>
         <div>{blog.creationDate}</div>  
