@@ -10,6 +10,7 @@
     "build:ui-dev": "NODE_ENV=dev rm -rf build && cd ../frontend/ && npm run build-dev --prod && cp -r build ../backend",
     "logs:prod": "heroku logs --tail",
     "start": "NODE_ENV=production node index.js",
+    "start3001": "PORT=3001 NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
     "test": "NODE_ENV=test jest --verbose --runInBand",

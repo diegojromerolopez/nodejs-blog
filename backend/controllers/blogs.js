@@ -23,7 +23,7 @@ blogsRouter.post('/', async (request, response) => {
     await blog.save()
     currentUser.blogs.push(blog)
     await currentUser.save()
-    response.status(204).end()
+    response.json(blog.toJSON())
 })
 
 blogsRouter.put('/:blogId', async (request, response) => {

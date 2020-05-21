@@ -139,7 +139,7 @@ test('blog is created', async () => {
         .post('/api/blogs')
         .send(newBlogData)
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(204)
+        .expect(200)
     
     const blogCount = await Blog.count({})
     expect(blogCount).toBe(1)
@@ -161,7 +161,7 @@ test('blog without likes is created', async () => {
         .post('/api/blogs')
         .send(newBlogData)
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(204)
+        .expect(200)
     
     const blogCount = await Blog.count({})
     expect(blogCount).toBe(1)
