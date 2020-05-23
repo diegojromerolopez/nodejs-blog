@@ -8,6 +8,8 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import tokenService from './services/token'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -31,7 +33,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     if (loggedUserJSON) {
       const userData = JSON.parse(loggedUserJSON)
-      blogService.setToken(userData.token)
+      tokenService.setToken(userData.token)
       setUser(userData.user)
       blogService.getAll().then(blogs =>
         setBlogs( blogs )
@@ -64,7 +66,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBlogAppUser', JSON.stringify(userData)
       ) 
-      blogService.setToken(userData.token)
+      tokenService.setToken(userData.token)
       setUser(userData.user)
       setUsername('')
       setPassword('')

@@ -25,7 +25,7 @@ postsRouter.post('/', async (request, response) => {
     blog.posts.push(post)
     await blog.save()
     // HTTP response
-    response.status(204).end()
+    response.json(post.toJSON())
 })
 
 postsRouter.put('/:postId', async (request, response) => {
@@ -41,6 +41,32 @@ postsRouter.put('/:postId', async (request, response) => {
     const updatedPost = await Post.findOneAndUpdate(
         {blog: request.params.blogId, creator: request.currentUser._id, _id: request.params.postId},
         updatedAttributes,
+        {new: true}
+    )
+    if(updatedPost){
+        response.json(updatedPost.toJSON())
+    }else{
+        response.status(404).end()
+    }
+})
+
+postsRouter.put('/:postId/like', async (request, response) => {
+    const updatedPost = await Post.findOneAndUpdate(
+        {blog: request.params.blogId, _id: request.params.postId, 'likers': {'$nin': request.currentUser._id}},
+        {'$inc': {'likes': 1}, '$addToSet': {'likers': request.currentUser._id}},
+        {new: true}
+    )
+    if(updatedPost){
+        response.json(updatedPost.toJSON())
+    }else{
+        response.status(404).end()
+    }
+})
+
+postsRouter.put('/:postId/unlike', async (request, response) => {
+    const updatedPost = await Post.findOneAndUpdate(
+        {blog: request.params.blogId, _id: request.params.postId, 'likers': {'$in': request.currentUser._id}},
+        {'$inc': {'likes': -1}, '$pull': {'likers': request.currentUser._id}},
         {new: true}
     )
     if(updatedPost){

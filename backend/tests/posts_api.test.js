@@ -96,7 +96,7 @@ test('post is created', async () => {
         .post(`/api/blogs/${this.blog._id}/posts`)
         .send(newPostData)
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(204)
+        .expect(200)
     
     const blogCount = await Blog.count({})
     expect(blogCount).toBe(1)

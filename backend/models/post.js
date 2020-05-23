@@ -36,7 +36,12 @@ const postSchema = new mongoose.Schema({
     creator: {
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    likers: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    }]
 })
 
 postSchema.set('toJSON', {

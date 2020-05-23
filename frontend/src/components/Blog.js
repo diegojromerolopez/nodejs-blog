@@ -1,14 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Togglable from './Togglable'
+import PostForm from './PostForm'
+import Post from './Post'
 import blogService from '../services/blogs'
-
+import postService from '../services/posts'
 
 
 const Blog = ({ blog, blogs, setBlogs, setNotification, user }) =>{
+  const [posts, setPosts] = useState([])
   const like = async (blog) => {
     try {
       const respBlog = await blogService.like(blog.id)
-      console.log(respBlog)
       setBlogs(blogs.filter(blogI => blogI.id !== respBlog.id).concat(respBlog))
       setNotification(`Blog ${blog.title} liked`, "success")
     }catch(exception){
@@ -45,19 +47,51 @@ const Blog = ({ blog, blogs, setBlogs, setNotification, user }) =>{
     }
   }
 
+  const viewPosts = async (blog) => {
+    try {
+        const respPosts = await postService.getAll(blog.id)
+        console.log(respPosts)
+        setPosts(respPosts)
+        setNotification(`Posts of blog ${blog.title} loaded`, "success")
+    }catch(exception){
+      console.error(exception)
+      setNotification(`Posts of blog ${blog.title} couldn't be loaded`, "error")
+    }
+  }
+
+  const hidePosts = async () => {
+    setPosts([])
+  }
+  //console.log(user, blog)
   return (
     <div className="blog">
       <h2>{blog.title}</h2>
-      <Togglable viewButtonLabel="view more info">
+      <Togglable viewButtonLabel="view more info" hideButtonLabel="hide info" onVisible={() => setPosts([])}>
         <div>{blog.author}</div>
         <div>
           ❤ {blog.likes}
           {user && blog.likers.indexOf(user.id) === -1 && <button onClick={()=>{like(blog)}}>like</button>}
           {user && blog.likers.indexOf(user.id) > -1 && <button onClick={()=>{unlike(blog)}}>unlike</button>}
-          {user && blog.creator == user.id && <button onClick={()=>{deleteBlog(blog)}}>Delete</button>}
+          {user && blog.creator === user.id && <button onClick={()=>{deleteBlog(blog)}}>Delete</button>}
         </div>
         <div><a href={blog.url}>Visit</a></div>
-        <div>{blog.creationDate}</div>  
+        <div>{blog.creationDate}</div>
+        {
+        blog.creator && user.id === blog.creator.id &&
+        <Togglable viewButtonLabel="new post">
+          <PostForm blog={blog} posts={posts} setPosts={setPosts} setNotification={setNotification} />
+        </Togglable>
+        }
+        <div>
+          {posts.length === 0 && <button onClick={() => viewPosts(blog)}>View posts</button>}
+          {posts.length > 0 && <button onClick={() => hidePosts()}>Hide posts</button>}
+        </div>
+        {
+      posts ?
+        posts.map(post =>
+          <Post key={post.id} post={post} posts={posts} setPosts={setPosts} setNotification={setNotification} user={user} />
+        ) : ""
+      }
       </Togglable>
     </div>
   )

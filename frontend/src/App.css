@@ -62,3 +62,16 @@
   background-color: navy;
   color: white;
 }
+
+.post{
+  margin-left: 1em;
+  padding: 0.2em;
+}
+
+.post:nth-child(even){
+  background-color: darkgrey;
+}
+
+.post:nth-child(even){
+  background-color: grey;
+}
