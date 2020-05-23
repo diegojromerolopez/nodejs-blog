@@ -9,6 +9,7 @@ const BlogForm = ({ blogs, setBlogs, setNotification }) => {
   const [newBlogUrl, setNewBlogUrl] = useState('')
 
   const addBlog = async (event) => {
+    console.error('addBlog')
     event.preventDefault()
     const blogObject = {
       title: newBlogTitle,
@@ -26,24 +27,25 @@ const BlogForm = ({ blogs, setBlogs, setNotification }) => {
       console.error(exception)
       setNotification('Blog couldn\'t be added succesfully', 'error')
     }
+    console.error('addBlog END')
   }
 
 
   return (
-    <form onSubmit={addBlog}>
+    <form id={'blogForm'} onSubmit={addBlog}>
       <div>
         <strong>Title</strong>
-        <input value={newBlogTitle} onChange={({ target }) => setNewBlogTitle(target.value)} />
+        <input id={'blogFormTitleInput'} value={newBlogTitle} onChange={({ target }) => setNewBlogTitle(target.value)} />
       </div>
       <div>
         <strong>Author</strong>
-        <input value={newBlogAuthor} onChange={({ target }) => setNewBlogAuthor(target.value)} />
+        <input id={'blogFormAuthorInput'} value={newBlogAuthor} onChange={({ target }) => setNewBlogAuthor(target.value)} />
       </div>
       <div>
         <strong>URL</strong>
-        <input value={newBlogUrl} onChange={({ target }) => setNewBlogUrl(target.value)}/>
+        <input id={'blogFormUrlInput'} value={newBlogUrl} onChange={({ target }) => setNewBlogUrl(target.value)}/>
       </div>
-      <button type="submit">save</button>
+      <button id={'blogFormSubmit'} type="submit">save</button>
     </form>
   )
 }
