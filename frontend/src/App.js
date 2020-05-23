@@ -16,8 +16,8 @@ const App = () => {
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationType, setNotificationType] = useState(null)
   // Login states
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   const setNotification = (message, notifType) => {
@@ -37,7 +37,7 @@ const App = () => {
       setUser(userData.user)
       blogService.getAll().then(blogs =>
         setBlogs( blogs )
-      )  
+      )
     }
   }, [])
 
@@ -65,7 +65,7 @@ const App = () => {
       })
       window.localStorage.setItem(
         'loggedBlogAppUser', JSON.stringify(userData)
-      ) 
+      )
       tokenService.setToken(userData.token)
       setUser(userData.user)
       setUsername('')
@@ -88,29 +88,29 @@ const App = () => {
       <h2>blogs</h2>
 
       <Notification message={notificationMessage} notifType={notificationType} />
-      
+
       <Togglable viewButtonLabel="new blog">
         {
           user ?
-          <BlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} />
-          :
-          ""
+            <BlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} />
+            :
+            ''
         }
       </Togglable>
 
       {user ?
         <Logout handleLogout={handleLogout} user={user} /> :
         <Login handleLogin={handleLogin}
-               username={username} setUsername={setUsername}
-               password={password} setPassword={setPassword}
-        /> 
-      }      
+          username={username} setUsername={setUsername}
+          password={password} setPassword={setPassword}
+        />
+      }
 
       {
-      user ?
-        blogs.sort(blogSorter).map(blog =>
-          <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} user={user} />
-        ) : ""
+        user ?
+          blogs.sort(blogSorter).map(blog =>
+            <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} setNotification={setNotification} user={user} />
+          ) : ''
       }
     </div>
   )

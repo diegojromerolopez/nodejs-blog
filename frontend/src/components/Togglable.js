@@ -9,24 +9,26 @@ const Togglable = props => {
   const toggleVisibility = () => {
     setVisible(!visible)
     if(visible && props.onVisible){
-        props.onVisible()
+      props.onVisible()
     }
     if(!visible && props.onHidden){
-        props.onHidden()
+      props.onHidden()
     }
   }
 
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.viewButtonLabel || "view"}</button>
+        <button onClick={toggleVisibility}>{props.viewButtonLabel || 'view'}</button>
       </div>
       <div style={showWhenVisible}>
         {props.children}
-        <button onClick={toggleVisibility}>{props.hideButtonLabel || "hide"}</button>
+        <button onClick={toggleVisibility}>{props.hideButtonLabel || 'hide'}</button>
       </div>
     </div>
   )
 }
+
+Togglable.displayName = 'Togglable'
 
 export default Togglable

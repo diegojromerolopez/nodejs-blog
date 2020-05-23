@@ -1,13 +1,11 @@
-
-
 let token = null
 
 const setToken = newToken => {
-    token = `bearer ${newToken}`
+  token = `bearer ${newToken}`
 }
 
 const getToken = () => {
-    return token
+  return token
 }
 
 export default { getToken, setToken }
